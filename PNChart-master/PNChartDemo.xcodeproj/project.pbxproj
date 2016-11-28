@@ -296,6 +296,7 @@
 				0AF7A862182AA9F6003645C4 /* Resources */,
 				7D516272BD760D57A76DAD64 /* 📦 Embed Pods Frameworks */,
 				4552CFD6C9080AB9EE9E46D1 /* 📦 Copy Pods Resources */,
+				F07A217B399F7055988F772B /* Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
@@ -316,6 +317,7 @@
 				6E984E4F1AE2AF2D00E817A0 /* Resources */,
 				352F07839FB03B1A9D90A483 /* 📦 Embed Pods Frameworks */,
 				7D8856A691FAB9EC9C672F2A /* 📦 Copy Pods Resources */,
+				2D3773C504DB379917AC63B4 /* Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
@@ -337,6 +339,9 @@
 				LastUpgradeCheck = 0720;
 				ORGANIZATIONNAME = kevinzhow;
 				TargetAttributes = {
+					0AF7A863182AA9F6003645C4 = {
+						DevelopmentTeam = Z85NQV9DT5;
+					};
 					6E984E501AE2AF2D00E817A0 = {
 						CreatedOnToolsVersion = 6.3;
 						TestTargetID = 0AF7A863182AA9F6003645C4;
@@ -385,6 +390,21 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
+		2D3773C504DB379917AC63B4 /* Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Embed Pods Frameworks";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-PNChartTests/Pods-PNChartTests-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
 		352F07839FB03B1A9D90A483 /* 📦 Embed Pods Frameworks */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -458,6 +478,21 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-PNChartTests/Pods-PNChartTests-resources.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		F07A217B399F7055988F772B /* Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Embed Pods Frameworks";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-PNChartDemo/Pods-PNChartDemo-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 		FA0C39B32F296624BBDFF3E3 /* 📦 Check Pods Manifest.lock */ = {
@@ -620,6 +655,7 @@
 			baseConfigurationReference = B9566E1E0D31408BDFBA8A58 /* Pods-PNChartDemo.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				DEVELOPMENT_TEAM = Z85NQV9DT5;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "PNChartDemo/PNChartDemo-Prefix.pch";
 				INFOPLIST_FILE = "PNChartDemo/PNChartDemo-Info.plist";
@@ -635,6 +671,7 @@
 			baseConfigurationReference = 4C519A2B2B515B4587050D06 /* Pods-PNChartDemo.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				DEVELOPMENT_TEAM = Z85NQV9DT5;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "PNChartDemo/PNChartDemo-Prefix.pch";
 				INFOPLIST_FILE = "PNChartDemo/PNChartDemo-Info.plist";
