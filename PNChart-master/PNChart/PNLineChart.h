@@ -10,6 +10,7 @@
 #import <QuartzCore/QuartzCore.h>
 #import "PNChartDelegate.h"
 #import "PNGenericChart.h"
+#import "PNLineChartDataModel.h"
 
 @interface PNLineChart : PNGenericChart
 
@@ -89,6 +90,11 @@
  */
 
 - (void)updateChartData:(NSArray *)data;
+
+/**
+    初始化model的方法
+ */
+- (void)setLineChartModelArray:(NSArray *)modelArray;
 
 
 /**

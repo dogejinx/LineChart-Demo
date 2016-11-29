@@ -8,12 +8,14 @@
 
 #import "PCChartViewController.h"
 #define ARC4RANDOM_MAX 0x100000000
+#import "PNLineChartDataModel.h"
 
 @implementation PCChartViewController
 
 -(void)viewDidLoad
 {
     [super viewDidLoad];
+    self.view.backgroundColor = UIColorFromRGB(0xeeeeee);
     self.titleLabel.textColor = PNFreshGreen;
     self.leftSwitch.hidden = YES;
     self.rightSwitch.hidden = YES;
@@ -25,78 +27,59 @@
     self.changeValueButton.hidden = YES;
     
     if ([self.title isEqualToString:@"Line Chart"]) {
-
         self.titleLabel.text = @"Line Chart";
-
-        self.lineChart = [[PNLineChart alloc] initWithFrame:CGRectMake(0, 135.0, SCREEN_WIDTH, 200.0)];
-        self.lineChart.yLabelFormat = @"%1.1f";
-        self.lineChart.backgroundColor = [UIColor clearColor];
-        [self.lineChart setXLabels:@[@"SEP 1",@"SEP 2",@"SEP 3",@"SEP 4",@"SEP 5",@"SEP 6",@"SEP 7"]];
-        self.lineChart.showCoordinateAxis = YES;
-
-        // added an examle to show how yGridLines can be enabled
-        // the color is set to clearColor so that the demo remains the same
-        self.lineChart.yGridLinesColor = [UIColor clearColor];
-        self.lineChart.showYGridLines = YES;
         
-        //Use yFixedValueMax and yFixedValueMin to Fix the Max and Min Y Value
-        //Only if you needed
-        self.lineChart.yFixedValueMax = 300.0;
-        self.lineChart.yFixedValueMin = 0.0;
-
-        [self.lineChart setYLabels:@[
-            @"0 min",
-            @"50 min",
-            @"100 min",
-            @"150 min",
-            @"200 min",
-            @"250 min",
-            @"300 min",
-            ]
-         ];
+        // 测试数据
+        NSMutableArray *testArrry = [NSMutableArray array];
+        for (NSInteger i=0; i<6; i++) {
+            PNLineChartDataModel *m = [[PNLineChartDataModel alloc] init];
+            m.xString = [NSString stringWithFormat:@"10-0%zd",i+1];
+            m.yValue = 2000.0f * (i % 5);
+            m.showInLabelString = [NSString stringWithFormat:@"%@ %1.f 万", m.xString, m.yValue];
+            [testArrry addObject:m];
+        }
         
-        // Line Chart #1
-        NSArray * data01Array = @[@60.1, @160.1, @126.4, @0.0, @186.2, @127.2, @176.2];
-        PNLineChartData *data01 = [PNLineChartData new];
-        data01.dataTitle = @"Alpha";
-        data01.color = PNFreshGreen;
-        data01.alpha = 0.3f;
-        data01.itemCount = data01Array.count;
-        data01.inflexionPointColor = PNRed;
-        data01.inflexionPointStyle = PNLineChartPointStyleTriangle;
-        data01.getData = ^(NSUInteger index) {
-            CGFloat yValue = [data01Array[index] floatValue];
-            return [PNLineChartDataItem dataItemWithY:yValue];
-        };
-        
-        // Line Chart #2
-        NSArray * data02Array = @[@0.0, @180.1, @26.4, @202.2, @126.2, @167.2, @276.2];
-        PNLineChartData *data02 = [PNLineChartData new];
-        data02.dataTitle = @"Beta";
-        data02.color = PNTwitterColor;
-        data02.alpha = 0.5f;
-        data02.itemCount = data02Array.count;
-        data02.inflexionPointStyle = PNLineChartPointStyleCircle;
-        data02.getData = ^(NSUInteger index) {
-            CGFloat yValue = [data02Array[index] floatValue];
-            return [PNLineChartDataItem dataItemWithY:yValue];
-        };
+        /**
+            需要关注的内容
+         */
+        {
+            self.lineChart = [[PNLineChart alloc] initWithFrame:CGRectMake(0, 135.0, SCREEN_WIDTH, 200.0)];
+            
+            self.lineChart.showCoordinateAxis = YES; //显示x,y坐标轴
+            self.lineChart.yGridLinesColor = UIColorFromRGB(0xd9d9d9);// 虚线的颜色
+            self.lineChart.showYGridLines = YES;// 显示水平虚线
+            self.lineChart.xLabelColor = UIColorFromRGB(0x999999);
+            self.lineChart.xLabelFont = [UIFont systemFontOfSize:11.0f];
+            self.lineChart.yLabelColor = UIColorFromRGB(0x999999);
+            self.lineChart.yLabelFont = [UIFont systemFontOfSize:11.0f];
+            self.lineChart.chartMarginLeft = 60;// 根据y轴的label最大宽度，适当调整
 
-        self.lineChart.chartData = @[data01, data02];
-        [self.lineChart strokeChart];
-        self.lineChart.delegate = self;
-        
+            
+            // 1.传入数组
+            [self.lineChart setLineChartModelArray:testArrry];
+            
+            // 2.传入y轴数组
+            [self.lineChart setYLabels:@[
+                @"0",
+                @"2000",
+                @"4000",
+                @"6000",
+                @"8000",
+                @"10000",
+                ]
+             ];
+            
+            // 3.如需要代理可以添加代理
+            self.lineChart.delegate = self;
 
-        [self.view addSubview:self.lineChart];
-
-        self.lineChart.legendStyle = PNLegendItemStyleStacked;
-        self.lineChart.legendFont = [UIFont boldSystemFontOfSize:12.0f];
-        self.lineChart.legendFontColor = [UIColor redColor];
-        
-        UIView *legend = [self.lineChart getLegendWithMaxWidth:320];
-        [legend setFrame:CGRectMake(30, 340, legend.frame.size.width, legend.frame.size.width)];
-        [self.view addSubview:legend];
+            [self.view addSubview:self.lineChart];
+        }
     }
+    
+/** 
+    ########################################################################
+ */
+    
     else if ([self.title isEqualToString:@"Bar Chart"])
     {
         static NSNumberFormatter *barChartFormatter;
@@ -259,7 +242,7 @@
 
 
 - (void)userClickedOnLineKeyPoint:(CGPoint)point lineIndex:(NSInteger)lineIndex pointIndex:(NSInteger)pointIndex{
-    NSLog(@"Click Key on line %f, %f line index is %d and point index is %d",point.x, point.y,(int)lineIndex, (int)pointIndex);
+//    NSLog(@"Click Key on line %f, %f line index is %d and point index is %d",point.x, point.y,(int)lineIndex, (int)pointIndex);
 }
 
 - (void)userClickedOnLinePoint:(CGPoint)point lineIndex:(NSInteger)lineIndex{

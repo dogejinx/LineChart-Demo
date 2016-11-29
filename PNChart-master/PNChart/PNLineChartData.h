@@ -21,6 +21,7 @@ typedef PNLineChartDataItem *(^LCLineChartDataGetter)(NSUInteger item);
 
 @property (strong) UIColor *color;
 @property (nonatomic) CGFloat alpha;
+@property (nonatomic) UIColor *fillColor;
 @property NSUInteger itemCount;
 @property (copy) LCLineChartDataGetter getData;
 @property (strong, nonatomic) NSString *dataTitle;
