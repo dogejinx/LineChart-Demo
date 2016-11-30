@@ -36,7 +36,7 @@
             PNLineChartDataModel *m = [[PNLineChartDataModel alloc] init];
             m.xString = [NSString stringWithFormat:@"10-0%zd",i+1];
             m.yValue = 2000.0f * (i % 5);
-            m.showInLabelString = [NSString stringWithFormat:@"%@ %1.f 万", m.xString, m.yValue];
+            m.showInLabelString = [NSString stringWithFormat:@"%@ %1.f 万 票房", m.xString, m.yValue];
             [_testArray1 addObject:m];
         }
         
@@ -45,7 +45,7 @@
             PNLineChartDataModel *m = [[PNLineChartDataModel alloc] init];
             m.xString = [NSString stringWithFormat:@"10-0%zd",i+1];
             m.yValue = 2000.0f * (i % 4) + 1000.0f;
-            m.showInLabelString = [NSString stringWithFormat:@"%@ %1.f 万", m.xString, m.yValue];
+            m.showInLabelString = [NSString stringWithFormat:@"2016 %@ %1.f 万 票房", m.xString, m.yValue];
             [_testArray2 addObject:m];
         }
         
@@ -63,7 +63,7 @@
                                                                              @"4000",
                                                                              @"6000",
                                                                              @"8000",
-                                                                             @"10000",
+                                                                             @"10000"
                                                                              ]];
             
             // 2.如需要代理可以添加代理
@@ -406,7 +406,7 @@
                                                                                 @"4000",
                                                                                 @"6000",
                                                                                 @"8000",
-                                                                                @"10000",
+                                                                                
                                                                                 ]];
         }
         
