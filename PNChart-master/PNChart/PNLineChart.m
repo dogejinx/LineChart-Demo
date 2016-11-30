@@ -240,8 +240,8 @@
 #pragma mark - Touch at point
 
 - (void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event {
-    [self touchPoint:touches withEvent:event];
-    [self touchKeyPoint:touches withEvent:event];
+//    [self touchPoint:touches withEvent:event];
+//    [self touchKeyPoint:touches withEvent:event];
 }
 
 - (void)touchesMoved:(NSSet *)touches withEvent:(UIEvent *)event {
@@ -249,11 +249,54 @@
     [self touchKeyPoint:touches withEvent:event];
 }
 
+- (void)touchesEnded:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event {
+    // Get the point user touched
+    UITouch *touch = [touches anyObject];
+    CGPoint touchPoint = [touch locationInView:self];
+    
+    if (touchPoint.x < _chartMarginLeft) {
+        touchPoint.x = _chartMarginLeft;
+    }
+    else if (touchPoint.x > (self.frame.size.width - _chartMarginRight)) {
+        touchPoint.x = (self.frame.size.width - _chartMarginRight);
+    }
+    
+    for (NSInteger p = _pathPoints.count - 1; p >= 0; p--) {
+        NSArray *linePointsArray = _pathPoints[p];
+        
+        for (int i = 0; i < (int) linePointsArray.count - 1; i += 1) {
+            CGPoint p1 = [linePointsArray[i] CGPointValue];
+            CGPoint p2 = [linePointsArray[i + 1] CGPointValue];
+            
+            float distanceToP1 = fabs(hypot(touchPoint.x - p1.x, 0));
+            float distanceToP2 = hypot(touchPoint.x - p2.x, 0);
+            
+            float distance = MIN(distanceToP1, distanceToP2);
+            
+            if (distance <= (_xLabelWidth/2.f)) {// 调整手指touch响应范围(越大，响应范围越大)
+                CGPoint keyPoint = (distance == distanceToP2) ? p2 : p1;
+                NSInteger keyIndex = distance == distanceToP2 ? i + 1 : i;
+                [self drawAuxiliaryLine:keyPoint line:p index:keyIndex];
+                
+                return;
+            }
+        }
+    }
+}
+
+
 - (void)touchPoint:(NSSet *)touches withEvent:(UIEvent *)event {
     // Get the point user touched
     UITouch *touch = [touches anyObject];
     CGPoint touchPoint = [touch locationInView:self];
 
+    if (touchPoint.x < _chartMarginLeft) {
+        touchPoint.x = _chartMarginLeft;
+    }
+    else if (touchPoint.x > (self.frame.size.width - _chartMarginRight)) {
+        touchPoint.x = (self.frame.size.width - _chartMarginRight);
+    }
+    
     for (NSInteger p = _pathPoints.count - 1; p >= 0; p--) {
         NSArray *linePointsArray = _endPointsOfPath[p];
 
@@ -281,11 +324,21 @@
     }
 }
 
+
+
 - (void)touchKeyPoint:(NSSet *)touches withEvent:(UIEvent *)event {
     // Get the point user touched
     UITouch *touch = [touches anyObject];
     CGPoint touchPoint = [touch locationInView:self];
-
+    
+    if (touchPoint.x < _chartMarginLeft) {
+        touchPoint.x = _chartMarginLeft;
+    }
+    else if (touchPoint.x > (self.frame.size.width - _chartMarginRight)) {
+        touchPoint.x = (self.frame.size.width - _chartMarginRight);
+    }
+    
+    [self drawAuxiliaryLine:touchPoint];
     for (NSInteger p = _pathPoints.count - 1; p >= 0; p--) {
         NSArray *linePointsArray = _pathPoints[p];
 
@@ -293,12 +346,12 @@
             CGPoint p1 = [linePointsArray[i] CGPointValue];
             CGPoint p2 = [linePointsArray[i + 1] CGPointValue];
 
-            float distanceToP1 = fabs(hypot(touchPoint.x - p1.x, touchPoint.y - p1.y));
-            float distanceToP2 = hypot(touchPoint.x - p2.x, touchPoint.y - p2.y);
+            float distanceToP1 = fabs(hypot(touchPoint.x - p1.x, 0));
+            float distanceToP2 = hypot(touchPoint.x - p2.x, 0);
 
             float distance = MIN(distanceToP1, distanceToP2);
 
-            if (distance <= 20.0) {// 调整手指touch响应范围(越大，响应范围越大)
+            if (distance <= 10.0) {// 调整手指touch响应范围(越大，响应范围越大)
                 CGPoint keyPoint = (distance == distanceToP2) ? p2 : p1;
                 NSInteger keyIndex = distance == distanceToP2 ? i + 1 : i;
                 [self drawAuxiliaryLine:keyPoint line:p index:keyIndex];
@@ -313,17 +366,9 @@
 }
 
 #pragma mark - 绘制 辅助线
-- (void)drawAuxiliaryLine:(CGPoint)point line:(NSInteger)line index:(NSInteger)index {
-    
-    if (nil != _auxiliaryLineShapeLayer) {
-        [_auxiliaryLineShapeLayer removeFromSuperlayer];
-    }
-    
-    if (nil != _auxiliaryLabel) {
-        [_auxiliaryLabel removeFromSuperview];
-    }
-    
-    {
+- (void)drawAuxiliaryLine:(CGPoint)point {
+
+    if (nil == _auxiliaryLineShapeLayer) {
         CAShapeLayer *auxiliary = [CAShapeLayer layer];
         auxiliary.strokeColor = [UIColorFromRGB(0x3d99ed) CGColor];
         auxiliary.lineCap = kCALineCapRound;
@@ -332,7 +377,53 @@
         auxiliary.lineWidth = 2.f;
         _auxiliaryLineShapeLayer = auxiliary;
         [self.layer addSublayer:auxiliary];
+    }
+    
+    {
+        UIBezierPath *path = [UIBezierPath bezierPath];
         
+        CGFloat inflexionWidth = 14.0f;
+        CGRect squareRect = CGRectMake(point.x - inflexionWidth / 2, point.y - inflexionWidth / 2, inflexionWidth, inflexionWidth);
+        CGPoint squareCenter = CGPointMake(squareRect.origin.x + (squareRect.size.width / 2), squareRect.origin.y + (squareRect.size.height / 2));
+        
+        [path moveToPoint:CGPointMake(squareCenter.x, _chartMarginTop)];
+        [path addLineToPoint:CGPointMake(squareCenter.x, _chartMarginTop + _chartCavanHeight)];
+        
+        _auxiliaryLineShapeLayer.path = path.CGPath;
+        _auxiliaryLineShapeLayer.strokeEnd = 1.0;
+    }
+    
+}
+
+
+#pragma mark - 绘制 数据点 Label
+- (void)drawAuxiliaryLine:(CGPoint)point line:(NSInteger)line index:(NSInteger)index {
+    
+    if (nil == _auxiliaryLineShapeLayer) {
+        CAShapeLayer *auxiliary = [CAShapeLayer layer];
+        auxiliary.strokeColor = [UIColorFromRGB(0x3d99ed) CGColor];
+        auxiliary.lineCap = kCALineCapRound;
+        auxiliary.lineJoin = kCALineJoinRound;
+        auxiliary.fillColor = [[UIColor whiteColor] CGColor];
+        auxiliary.lineWidth = 2.f;
+        _auxiliaryLineShapeLayer = auxiliary;
+        [self.layer addSublayer:auxiliary];
+    }
+    
+    if (nil == _auxiliaryLabel) {
+        UILabel *label = [[UILabel alloc] init];
+        label.frame = CGRectMake(0, 0, 200, 30);
+        label.layer.masksToBounds = YES;
+        label.layer.cornerRadius = 4.f;
+        label.font = [UIFont systemFontOfSize:15.f];
+        label.textAlignment = NSTextAlignmentCenter;
+        label.backgroundColor = UIColorFromRGB(0x3d99ed);
+        label.textColor = [UIColor whiteColor];
+        _auxiliaryLabel = label;
+        [self addSubview:label];
+    }
+    
+    {
         UIBezierPath *path = [UIBezierPath bezierPath];
         
         CGFloat inflexionWidth = 14.0f;
@@ -348,43 +439,37 @@
         [path moveToPoint:CGPointMake(squareCenter.x, _chartMarginTop)];
         [path addLineToPoint:CGPointMake(squareCenter.x, _chartMarginTop + _chartCavanHeight)];
         
-        
-        auxiliary.path = path.CGPath;
-        
-        auxiliary.strokeEnd = 1.0;
+        _auxiliaryLineShapeLayer.path = path.CGPath;
+        _auxiliaryLineShapeLayer.strokeEnd = 1.0;
     }
     
     {
-        UILabel *label = [[UILabel alloc] init];
-        label.frame = CGRectMake(0, 0, 200, 30);
-        label.layer.masksToBounds = YES;
-        label.layer.cornerRadius = 4.f;
-        label.font = [UIFont systemFontOfSize:15.f];
-        label.textAlignment = NSTextAlignmentCenter;
-        label.backgroundColor = UIColorFromRGB(0x3d99ed);
-        label.textColor = [UIColor whiteColor];
-        _auxiliaryLabel = label;
-        [self addSubview:label];
-        
         PNLineChartData *data = self.chartData[line];
         NSString *str = [NSString stringWithFormat:@"%@ %1.f 万票房",_xLabels[index],data.getData(index).rawY];
         
-        CGSize size = [PNLineChart sizeOfString:str withWidth:MAXFLOAT font:label.font];
+        CGSize size = [PNLineChart sizeOfString:str withWidth:MAXFLOAT font:_auxiliaryLabel.font];
         CGFloat size_width = size.width + 10;
         
         CGFloat x = point.x - (size_width / 2.f);
-        if (x<_chartMarginLeft) {
-            x = _chartMarginLeft;
+        
+        CGFloat xSpace = 6.f;
+        CGFloat xMargin = MIN(_chartMarginLeft, _chartMarginRight);
+        if (xSpace>xMargin) {
+            xSpace = 0.f;
         }
-        else if ((x + size_width)>(self.bounds.size.width - _chartMarginRight)) {
-            x = (self.bounds.size.width - _chartMarginRight) - size_width;
+        
+        if (x<(_chartMarginLeft - xSpace)) {
+            x = (_chartMarginLeft - xSpace);
+        }
+        else if ((x + size_width)>(self.bounds.size.width - (_chartMarginRight - xSpace))) {
+            x = (self.bounds.size.width - (_chartMarginRight - xSpace)) - size_width;
         }
     
-        CGFloat y = (_chartMarginTop - 10)/2.f + 10 - label.frame.size.height/2.f;
+        CGFloat y = (_chartMarginTop - 10)/2.f + 10 - _auxiliaryLabel.frame.size.height/2.f;
         
         
-        label.frame = CGRectMake(x, y, size_width, 30);
-        label.text = str;
+        _auxiliaryLabel.frame = CGRectMake(x, y, size_width, 30);
+        _auxiliaryLabel.text = str;
     }
 }
 
