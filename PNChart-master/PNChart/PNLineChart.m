@@ -298,7 +298,7 @@
 
             float distance = MIN(distanceToP1, distanceToP2);
 
-            if (distance <= 10.0) {
+            if (distance <= 20.0) {// 调整手指touch响应范围(越大，响应范围越大)
                 CGPoint keyPoint = (distance == distanceToP2) ? p2 : p1;
                 NSInteger keyIndex = distance == distanceToP2 ? i + 1 : i;
                 [self drawAuxiliaryLine:keyPoint line:p index:keyIndex];
@@ -367,7 +367,7 @@
         [self addSubview:label];
         
         PNLineChartData *data = self.chartData[line];
-        NSString *str = [NSString stringWithFormat:@"%@ %1.f",_xLabels[index],data.getData(index).rawY];
+        NSString *str = [NSString stringWithFormat:@"%@ %1.f 万票房",_xLabels[index],data.getData(index).rawY];
         
         CGSize size = [PNLineChart sizeOfString:str withWidth:MAXFLOAT font:label.font];
         CGFloat size_width = size.width + 10;
