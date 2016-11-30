@@ -368,9 +368,22 @@
         
         PNLineChartData *data = self.chartData[line];
         NSString *str = [NSString stringWithFormat:@"%@ %1.f",_xLabels[index],data.getData(index).rawY];
+        
         CGSize size = [PNLineChart sizeOfString:str withWidth:MAXFLOAT font:label.font];
-        label.frame = CGRectMake(0, 0, size.width+10, 30);
-        label.center = CGPointMake(self.bounds.size.width/2.f, (_chartMarginTop - 10)/2.f + 10);
+        CGFloat size_width = size.width + 10;
+        
+        CGFloat x = point.x - (size_width / 2.f);
+        if (x<_chartMarginLeft) {
+            x = _chartMarginLeft;
+        }
+        else if ((x + size_width)>(self.bounds.size.width - _chartMarginRight)) {
+            x = (self.bounds.size.width - _chartMarginRight) - size_width;
+        }
+    
+        CGFloat y = (_chartMarginTop - 10)/2.f + 10 - label.frame.size.height/2.f;
+        
+        
+        label.frame = CGRectMake(x, y, size_width, 30);
         label.text = str;
     }
 }
