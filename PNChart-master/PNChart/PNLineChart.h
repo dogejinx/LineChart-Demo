@@ -92,9 +92,13 @@
 - (void)updateChartData:(NSArray *)data;
 
 /**
-    初始化model的方法
+    初始化 model 的方法
  */
-- (void)setLineChartModelArray:(NSArray *)modelArray;
+- (void)setLineChartModelArray:(NSArray *)modelArray yLabelArray:(NSArray *)yLabelArray ;
+/**
+    更新 model 的方法
+ */
+- (void)updateLineChartModelArray:(NSArray *)modelArray yLabelArray:(NSArray *)yLabelArray ;
 
 
 /**

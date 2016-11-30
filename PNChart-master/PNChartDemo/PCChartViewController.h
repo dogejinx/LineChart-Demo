@@ -18,6 +18,10 @@
 @property (nonatomic) PNPieChart *pieChart;
 @property (nonatomic) PNScatterChart *scatterChart;
 @property (nonatomic) PNRadarChart *radarChart;
+// test data
+@property (nonatomic) NSMutableArray *testArray1;
+@property (nonatomic) NSMutableArray *testArray2;
+
 @property (weak, nonatomic) IBOutlet UILabel *centerSwitchLabel;
 
 @property (weak, nonatomic) IBOutlet UILabel *titleLabel;

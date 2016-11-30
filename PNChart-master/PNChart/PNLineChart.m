@@ -240,8 +240,7 @@
 #pragma mark - Touch at point
 
 - (void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event {
-//    [self touchPoint:touches withEvent:event];
-//    [self touchKeyPoint:touches withEvent:event];
+
 }
 
 - (void)touchesMoved:(NSSet *)touches withEvent:(UIEvent *)event {
@@ -993,7 +992,7 @@
     // Initialization code
     self.backgroundColor = [UIColor whiteColor];
     self.clipsToBounds = YES;
-    self.chartLineArray = [NSMutableArray new];
+//    self.chartLineArray = [NSMutableArray new];
     _showLabel = YES;
     _showGenYLabels = YES;
     _pathPoints = [[NSMutableArray alloc] init];
@@ -1029,7 +1028,22 @@
 
 
 #pragma mark - 简单的初始化API方法
-- (void)setLineChartModelArray:(NSArray *)modelArray {
+- (void)setLineChartModelArray:(NSArray *)modelArray yLabelArray:(NSArray *)yLabelArray {
+    
+    [self setupDefaultValues];
+    [self setupDIYDefault];
+    
+    if (_auxiliaryLabel) {
+        [_auxiliaryLabel removeFromSuperview];
+        _auxiliaryLabel = nil;
+    }
+    if (_auxiliaryLineShapeLayer) {
+        [_auxiliaryLineShapeLayer removeFromSuperlayer];
+        _auxiliaryLineShapeLayer = nil;
+    }
+    
+    [self setYLabels:yLabelArray];
+    
     if (modelArray != nil) {
         _chartModelArray = [modelArray mutableCopy];
     }
@@ -1064,6 +1078,69 @@
     [self strokeChart];
     
 }
+
+#pragma mark - 简单的更新API方法
+- (void)updateLineChartModelArray:(NSArray *)modelArray yLabelArray:(NSArray *)yLabelArray  {
+    
+    if (_auxiliaryLabel) {
+        [_auxiliaryLabel removeFromSuperview];
+        _auxiliaryLabel = nil;
+    }
+    if (_auxiliaryLineShapeLayer) {
+        [_auxiliaryLineShapeLayer removeFromSuperlayer];
+        _auxiliaryLineShapeLayer = nil;
+    }
+    
+    [self setupDefaultValues];
+    [self setupDIYDefault];
+    
+    [self setYLabels:yLabelArray];
+    
+    if (modelArray != nil) {
+        _chartModelArray = [modelArray mutableCopy];
+    }
+    
+    {
+        NSMutableArray *xStringArr = [NSMutableArray array];
+        for (NSInteger i=0; i<_chartModelArray.count; i++) {
+            PNLineChartDataModel *temp = _chartModelArray[i];
+            [xStringArr addObject:temp.xString];
+        }
+        
+        self.xLabels = xStringArr;
+    }
+    
+    NSMutableArray *yValueArr = [NSMutableArray array];
+    for (NSInteger i=0; i<_chartModelArray.count; i++) {
+        PNLineChartDataModel *temp = _chartModelArray[i];
+        NSNumber *yNum = [NSNumber numberWithFloat:temp.yValue];
+        [yValueArr addObject:yNum];
+    }
+    
+    PNLineChartData *data = [PNLineChartData new];
+    data.color = UIColorFromRGB(0x3d99ed);
+    data.fillColor = UIColorFromRGB(0xdceeff);
+    data.itemCount = yValueArr.count;
+    data.getData = ^(NSUInteger index) {
+        CGFloat yValue = [yValueArr[index] floatValue];
+        return [PNLineChartDataItem dataItemWithY:yValue];
+    };
+    
+    [self updateChartData:@[data]];
+    
+}
+
+- (void)setupDIYDefault {
+    _showCoordinateAxis = YES; //显示x,y坐标轴
+    _yGridLinesColor = UIColorFromRGB(0xd9d9d9);// 虚线的颜色
+    _showYGridLines = YES;// 显示水平虚线
+    _xLabelColor = UIColorFromRGB(0x999999);
+    _xLabelFont = [UIFont systemFontOfSize:11.0f];
+    _yLabelColor = UIColorFromRGB(0x999999);
+    _yLabelFont = [UIFont systemFontOfSize:11.0f];
+    _chartMarginLeft = 60;// 根据y轴的label最大宽度，适当调整
+}
+
 
 #pragma mark - Tools func
 

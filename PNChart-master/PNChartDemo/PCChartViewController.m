@@ -26,18 +26,29 @@
     
     self.changeValueButton.hidden = YES;
     
+    
     if ([self.title isEqualToString:@"Line Chart"]) {
         self.titleLabel.text = @"Line Chart";
         
         // 测试数据
-        NSMutableArray *testArrry = [NSMutableArray array];
+        _testArray1 = [NSMutableArray array];
         for (NSInteger i=0; i<6; i++) {
             PNLineChartDataModel *m = [[PNLineChartDataModel alloc] init];
             m.xString = [NSString stringWithFormat:@"10-0%zd",i+1];
             m.yValue = 2000.0f * (i % 5);
             m.showInLabelString = [NSString stringWithFormat:@"%@ %1.f 万", m.xString, m.yValue];
-            [testArrry addObject:m];
+            [_testArray1 addObject:m];
         }
+        
+        _testArray2 = [NSMutableArray array];
+        for (NSInteger i=0; i<6; i++) {
+            PNLineChartDataModel *m = [[PNLineChartDataModel alloc] init];
+            m.xString = [NSString stringWithFormat:@"10-0%zd",i+1];
+            m.yValue = 2000.0f * (i % 4) + 1000.0f;
+            m.showInLabelString = [NSString stringWithFormat:@"%@ %1.f 万", m.xString, m.yValue];
+            [_testArray2 addObject:m];
+        }
+        
         
         /**
             需要关注的内容
@@ -45,31 +56,17 @@
         {
             self.lineChart = [[PNLineChart alloc] initWithFrame:CGRectMake(0, 135.0, SCREEN_WIDTH, 200.0)];
             
-            self.lineChart.showCoordinateAxis = YES; //显示x,y坐标轴
-            self.lineChart.yGridLinesColor = UIColorFromRGB(0xd9d9d9);// 虚线的颜色
-            self.lineChart.showYGridLines = YES;// 显示水平虚线
-            self.lineChart.xLabelColor = UIColorFromRGB(0x999999);
-            self.lineChart.xLabelFont = [UIFont systemFontOfSize:11.0f];
-            self.lineChart.yLabelColor = UIColorFromRGB(0x999999);
-            self.lineChart.yLabelFont = [UIFont systemFontOfSize:11.0f];
-            self.lineChart.chartMarginLeft = 60;// 根据y轴的label最大宽度，适当调整
-
+            // 1.传入 数组 y轴数组
+            [self.lineChart setLineChartModelArray:_testArray1 yLabelArray:@[
+                                                                             @"0",
+                                                                             @"2000",
+                                                                             @"4000",
+                                                                             @"6000",
+                                                                             @"8000",
+                                                                             @"10000",
+                                                                             ]];
             
-            // 1.传入数组
-            [self.lineChart setLineChartModelArray:testArrry];
-            
-            // 2.传入y轴数组
-            [self.lineChart setYLabels:@[
-                @"0",
-                @"2000",
-                @"4000",
-                @"6000",
-                @"8000",
-                @"10000",
-                ]
-             ];
-            
-            // 3.如需要代理可以添加代理
+            // 2.如需要代理可以添加代理
             self.lineChart.delegate = self;
 
             [self.view addSubview:self.lineChart];
@@ -246,7 +243,7 @@
 }
 
 - (void)userClickedOnLinePoint:(CGPoint)point lineIndex:(NSInteger)lineIndex{
-    NSLog(@"Click on line %f, %f, line index is %d",point.x, point.y, (int)lineIndex);
+//    NSLog(@"Click on line %f, %f, line index is %d",point.x, point.y, (int)lineIndex);
 }
 
 
@@ -391,8 +388,28 @@
         [self.circleChart strokeChart];
     }
     else if ([self.title isEqualToString:@"Line Chart"]) {
-        self.lineChart.displayAnimated = sender.on;
-        [self.lineChart strokeChart];
+        
+        if (sender.on) {
+            [self.lineChart updateLineChartModelArray:_testArray1 yLabelArray:@[
+                                                                                 @"0",
+                                                                                 @"2000",
+                                                                                 @"4000",
+                                                                                 @"6000",
+                                                                                 @"8000",
+                                                                                 @"10000",
+                                                                                 ]];
+        }
+        else {
+            [self.lineChart updateLineChartModelArray:_testArray2 yLabelArray:@[
+                                                                                @"0",
+                                                                                @"2000",
+                                                                                @"4000",
+                                                                                @"6000",
+                                                                                @"8000",
+                                                                                @"10000",
+                                                                                ]];
+        }
+        
     }
     else if ([self.title isEqualToString:@"Bar Chart"]) {
         self.barChart.displayAnimated = sender.on;
