@@ -169,9 +169,9 @@
     CGFloat xLabelWidth;
     
     if (_showLabel) {
-        xLabelWidth = _chartCavanWidth / [xLabels count];
+        xLabelWidth = _chartCavanWidth / ([xLabels count] - 1);
     } else {
-        xLabelWidth = (self.frame.size.width) / [xLabels count];
+        xLabelWidth = (self.frame.size.width) / ([xLabels count] - 1);
     }
     
     return xLabelWidth;
@@ -182,9 +182,9 @@
     CGFloat xLabelWidth;
     
     if (!_showLabel) {
-        xLabelWidth = _chartCavanWidth / [xLabels count];
+        xLabelWidth = _chartCavanWidth / ([xLabels count] - 1);
     } else {
-        xLabelWidth = (self.frame.size.width - _chartMarginLeft - _chartMarginRight) / [xLabels count];
+        xLabelWidth = (self.frame.size.width - _chartMarginLeft - _chartMarginRight) / ([xLabels count] - 1);
     }
     
     return [self setXLabels:xLabels withWidth:xLabelWidth];
@@ -826,7 +826,7 @@
             _chartCavanHeight = self.frame.size.height - 2 * _yLabelHeight;
             _chartCavanWidth = self.frame.size.width;
             //_chartMargin = chartData.inflexionPointWidth;
-            _xLabelWidth = (_chartCavanWidth / ([_xLabels count]));
+            _xLabelWidth = (_chartCavanWidth / ([_xLabels count] - 1));
         }
         [self setNeedsDisplay];
     }
