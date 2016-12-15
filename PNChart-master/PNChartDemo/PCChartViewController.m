@@ -32,18 +32,18 @@
         
         // 测试数据
         _testArray1 = [NSMutableArray array];
-        for (NSInteger i=0; i<6; i++) {
+        for (NSInteger i=0; i<30; i++) {
             PNLineChartDataModel *m = [[PNLineChartDataModel alloc] init];
-            m.xString = [NSString stringWithFormat:@"10-0%zd",i+1];
+            m.xString = [NSString stringWithFormat:@"10-%02zd",i+1];
             m.yValue = 2000.0f * (i % 5);
             m.showInLabelString = [NSString stringWithFormat:@"%@ %1.f 万 票房", m.xString, m.yValue];
             [_testArray1 addObject:m];
         }
         
         _testArray2 = [NSMutableArray array];
-        for (NSInteger i=0; i<6; i++) {
+        for (NSInteger i=0; i<30; i++) {
             PNLineChartDataModel *m = [[PNLineChartDataModel alloc] init];
-            m.xString = [NSString stringWithFormat:@"10-0%zd",i+1];
+            m.xString = [NSString stringWithFormat:@"10-%02zd",i+1];
             m.yValue = 2000.0f * (i % 4) + 1000.0f;
             m.showInLabelString = [NSString stringWithFormat:@"2016 %@ %1.f 万 票房", m.xString, m.yValue];
             [_testArray2 addObject:m];
@@ -57,14 +57,18 @@
             self.lineChart = [[PNLineChart alloc] initWithFrame:CGRectMake(0, 135.0, SCREEN_WIDTH, 200.0)];
             
             // 1.传入 数组 y轴数组
-            [self.lineChart setLineChartModelArray:_testArray1 yLabelArray:@[
-                                                                             @"0",
-                                                                             @"2000",
-                                                                             @"4000",
-                                                                             @"6000",
-                                                                             @"8000",
-                                                                             @"10000"
-                                                                             ]];
+            [self.lineChart setLineChartModelArray:_testArray1
+                                       xNeedShowLabelArray:@[@"10-01",
+                                                     @"10-15",
+                                                     @"10-30"]
+                                       yLabelArray:@[
+                                                     @"0",
+                                                     @"2000",
+                                                     @"4000",
+                                                     @"6000",
+                                                     @"8000",
+                                                     @"10000"
+                                                     ]];
             
             // 2.如需要代理可以添加代理
             self.lineChart.delegate = self;
@@ -390,24 +394,34 @@
     else if ([self.title isEqualToString:@"Line Chart"]) {
         
         if (sender.on) {
-            [self.lineChart updateLineChartModelArray:_testArray1 yLabelArray:@[
-                                                                                 @"0",
-                                                                                 @"2000",
-                                                                                 @"4000",
-                                                                                 @"6000",
-                                                                                 @"8000",
-                                                                                 @"10000",
-                                                                                 ]];
+            [self.lineChart updateLineChartModelArray:_testArray1
+                                          xNeedShowLabelArray:@[@"10-01",
+                                                        @"10-15",
+                                                        @"10-30"]
+                                          yLabelArray:@[
+                                                        @"0",
+                                                        @"2000",
+                                                        @"4000",
+                                                        @"6000",
+                                                        @"8000",
+                                                        @"10000",
+                                                        ]];
         }
         else {
-            [self.lineChart updateLineChartModelArray:_testArray2 yLabelArray:@[
-                                                                                @"0",
-                                                                                @"2000",
-                                                                                @"4000",
-                                                                                @"6000",
-                                                                                @"8000",
-                                                                                
-                                                                                ]];
+            [self.lineChart updateLineChartModelArray:_testArray2
+                                  xNeedShowLabelArray:@[@"10-01",
+                                                        @"10-05",
+                                                        @"10-10",
+                                                        @"10-15",
+                                                        @"10-20",
+                                                        @"10-25",
+                                                        @"10-30",]
+                                          yLabelArray:@[@"0",
+                                                        @"2000",
+                                                        @"4000",
+                                                        @"6000",
+                                                        @"8000",
+                                                        ]];
         }
         
     }

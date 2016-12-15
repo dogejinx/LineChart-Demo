@@ -23,6 +23,7 @@
 
 @property (nonatomic) NSArray *xLabels;
 @property (nonatomic) NSArray *yLabels;
+@property (nonatomic) NSArray *xNeedShowLabels;
 
 /**
  * Array of `LineChartData` objects, one for each line.
@@ -94,11 +95,11 @@
 /**
     初始化 model 的方法
  */
-- (void)setLineChartModelArray:(NSArray *)modelArray yLabelArray:(NSArray *)yLabelArray ;
+- (void)setLineChartModelArray:(NSArray *)modelArray xNeedShowLabelArray:(NSArray *)xLabelArray yLabelArray:(NSArray *)yLabelArray;
 /**
     更新 model 的方法
  */
-- (void)updateLineChartModelArray:(NSArray *)modelArray yLabelArray:(NSArray *)yLabelArray ;
+- (void)updateLineChartModelArray:(NSArray *)modelArray xNeedShowLabelArray:(NSArray *)xLabelArray yLabelArray:(NSArray *)yLabelArray;
 
 
 /**

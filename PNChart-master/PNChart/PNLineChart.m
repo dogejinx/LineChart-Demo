@@ -181,7 +181,7 @@
 - (void)setXLabels:(NSArray *)xLabels {
     CGFloat xLabelWidth;
     
-    if (_showLabel) {
+    if (!_showLabel) {
         xLabelWidth = _chartCavanWidth / [xLabels count];
     } else {
         xLabelWidth = (self.frame.size.width - _chartMarginLeft - _chartMarginRight) / [xLabels count];
@@ -206,16 +206,25 @@
     if (_showLabel) {
         for (int index = 0; index < xLabels.count; index++) {
             labelText = xLabels[index];
+            if ([_xNeedShowLabels containsObject:labelText]) {
+                CGFloat xNeedShowLabelWidth;
+                if (_showLabel) {
+                    xNeedShowLabelWidth = _chartCavanWidth / [_xNeedShowLabels count];
+                } else {
+                    xNeedShowLabelWidth = (self.frame.size.width - _chartMarginLeft - _chartMarginRight) / [_xNeedShowLabels count];
+                }
+                
+                NSInteger x = (index * _xLabelWidth + _chartMarginLeft - xNeedShowLabelWidth / 2.0);
+                NSInteger y = _chartMarginTop + _chartCavanHeight + 10;
+                
+                PNChartLabel *label = [[PNChartLabel alloc] initWithFrame:CGRectMake(x, y, xNeedShowLabelWidth, _chartMarginBottom - 20)];
+                [label setTextAlignment:NSTextAlignmentCenter];
+                label.text = labelText;
+                [self setCustomStyleForXLabel:label];
+                [self addSubview:label];
+                [_xChartLabels addObject:label];
+            }
             
-            NSInteger x = (index * _xLabelWidth + _chartMarginLeft - _xLabelWidth / 2.0);
-            NSInteger y = _chartMarginTop + _chartCavanHeight + 10;
-            
-            PNChartLabel *label = [[PNChartLabel alloc] initWithFrame:CGRectMake(x, y, (NSInteger) _xLabelWidth, _chartMarginBottom - 20)];
-            [label setTextAlignment:NSTextAlignmentCenter];
-            label.text = labelText;
-            [self setCustomStyleForXLabel:label];
-            [self addSubview:label];
-            [_xChartLabels addObject:label];
         }
     }
 }
@@ -1001,6 +1010,7 @@
     _showGenYLabels = YES;
     _pathPoints = [[NSMutableArray alloc] init];
     _endPointsOfPath = [[NSMutableArray alloc] init];
+    _xNeedShowLabels = [[NSMutableArray alloc] init];
     self.userInteractionEnabled = YES;
     
     _yFixedValueMin = -FLT_MAX;
@@ -1032,7 +1042,7 @@
 
 
 #pragma mark - 简单的初始化API方法
-- (void)setLineChartModelArray:(NSArray *)modelArray yLabelArray:(NSArray *)yLabelArray {
+- (void)setLineChartModelArray:(NSArray *)modelArray xNeedShowLabelArray:(NSArray *)xNeedShowLabelArray yLabelArray:(NSArray *)yLabelArray {
     
     [self setupDefaultValues];
     [self setupDIYDefault];
@@ -1045,6 +1055,8 @@
         [_auxiliaryLineShapeLayer removeFromSuperlayer];
         _auxiliaryLineShapeLayer = nil;
     }
+    
+    _xNeedShowLabels = xNeedShowLabelArray;
     [self setupYFixedValue:yLabelArray];
     [self setYLabels:yLabelArray];
     
@@ -1084,7 +1096,7 @@
 }
 
 #pragma mark - 简单的更新API方法
-- (void)updateLineChartModelArray:(NSArray *)modelArray yLabelArray:(NSArray *)yLabelArray  {
+- (void)updateLineChartModelArray:(NSArray *)modelArray xNeedShowLabelArray:(NSArray *)xNeedShowLabelArray yLabelArray:(NSArray *)yLabelArray  {
     
     if (_auxiliaryLabel) {
         [_auxiliaryLabel removeFromSuperview];
@@ -1098,6 +1110,7 @@
     [self setupDefaultValues];
     [self setupDIYDefault];
     
+    _xNeedShowLabels = xNeedShowLabelArray;
     [self setupYFixedValue:yLabelArray];
     [self setYLabels:yLabelArray];
     
@@ -1135,6 +1148,7 @@
     [self setNeedsDisplay];
 }
 
+#pragma mark -
 - (void)setupDIYDefault {
     _showCoordinateAxis = YES; //显示x,y坐标轴
     _yGridLinesColor = UIColorFromRGB(0xd9d9d9);// 虚线的颜色
