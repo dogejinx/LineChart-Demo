@@ -252,16 +252,20 @@
 
 #pragma mark - Touch at point
 
+
+
 - (void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event {
-    
+//    NSLog(@"touchesBegan: %zd",event.type);
 }
 
 - (void)touchesMoved:(NSSet *)touches withEvent:(UIEvent *)event {
+//    NSLog(@"touchesMoved: %zd",event.type);
     [self touchPoint:touches withEvent:event];
     [self touchKeyPoint:touches withEvent:event];
 }
 
 - (void)touchesEnded:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event {
+//    NSLog(@"touchesEnded: %zd",event.type);
     // Get the point user touched
     UITouch *touch = [touches anyObject];
     CGPoint touchPoint = [touch locationInView:self];

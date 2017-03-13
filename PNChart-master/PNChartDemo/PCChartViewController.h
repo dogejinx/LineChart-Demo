@@ -10,7 +10,7 @@
 #import "PNChartDelegate.h"
 #import "PNChart.h"
 
-@interface PCChartViewController : UIViewController<PNChartDelegate>
+@interface PCChartViewController : UIViewController<PNChartDelegate, UIGestureRecognizerDelegate>
 
 @property (nonatomic) PNLineChart * lineChart;
 @property (nonatomic) PNBarChart * barChart;

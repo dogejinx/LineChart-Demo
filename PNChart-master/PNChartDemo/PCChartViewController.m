@@ -12,9 +12,20 @@
 
 @implementation PCChartViewController
 
+- (BOOL)gestureRecognizerShouldBegin:(UIGestureRecognizer *)gestureRecognizer
+{
+    CGPoint point = [gestureRecognizer locationInView:_lineChart];
+    if (CGRectContainsPoint(_lineChart.bounds,point)) {
+        return NO;
+    }
+    return YES;
+}
+
 -(void)viewDidLoad
 {
     [super viewDidLoad];
+    self.navigationController.interactivePopGestureRecognizer.delegate =  self;
+    
     self.view.backgroundColor = UIColorFromRGB(0xeeeeee);
     self.titleLabel.textColor = PNFreshGreen;
     self.leftSwitch.hidden = YES;
@@ -74,6 +85,7 @@
             self.lineChart.delegate = self;
 
             [self.view addSubview:self.lineChart];
+            
         }
     }
     
